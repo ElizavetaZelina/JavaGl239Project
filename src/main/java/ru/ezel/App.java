@@ -10,6 +10,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetUpdatesResponse;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class App {
@@ -18,7 +19,6 @@ public class App {
     private static final TelegramBot bot = new TelegramBot(TOKEN);
 
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("Hello World!");
         Integer updateId = 0;
         while (true) {
             System.out.print(".");
@@ -38,10 +38,19 @@ public class App {
     }
 
     private static void process(Update update) {
+        if (update.message() == null) {
+            System.out.print(" null msg ");
+            return;
+        }
+        if (update.message().chat() == null) {
+            System.out.print(" null chat ");
+            return;
+        }
         Long chatId = update.message().chat().id();
         String response;
-        if (update.message().text().equals("new")) {
-            response = "1+1\n2*3";
+        String text = update.message().text();
+        if (text.startsWith("new")) {
+            response = getCases(text);
         } else {
             response = "Use \"new\" command to get cases";
         }
@@ -51,8 +60,45 @@ public class App {
                 .parseMode(ParseMode.HTML)
                 .disableWebPagePreview(true)
                 .disableNotification(true)
-                .replyToMessageId(1)
+                .replyToMessageId(update.message().messageId())
                 .replyMarkup(new ForceReply());
         bot.execute(request);
+    }
+
+    private static String getCases(String text) {
+        String[] data = text.split(" ");
+        if (data.length != 4) {
+            return "Usage: new maxnum minnum casesnum";
+        }
+        int maxnum = Integer.parseInt(data[1]);
+        int minnum = Integer.parseInt(data[2]);
+        int casesnum = Integer.parseInt(data[3]);
+        return generateCases(maxnum, minnum, casesnum);
+    }
+
+    private static String generateCases(int maxnum, int minnum, int casesnum) {
+        if (maxnum < minnum) {
+            return "Invalid min-max nums";
+        }
+        if (casesnum <= 0 || casesnum > 100) {
+            return "Invalid cases num. 0 < x < 100";
+        }
+        Random r = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < casesnum; i++) {
+            int sign = r.nextInt(2);
+            String sSign;
+            if (sign == 0) {
+                sSign = "+";
+            } else {
+                sSign = "-";
+            }
+            int first = r.nextInt(maxnum - minnum);
+            first = first + minnum;
+            int second = r.nextInt(maxnum - minnum);
+            second = second + minnum;
+            sb.append(first + " " + sSign + " " + second + " =\n");
+        }
+        return sb.toString();
     }
 }
