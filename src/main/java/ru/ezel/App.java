@@ -86,12 +86,23 @@ public class App {
         Random r = new Random();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < casesnum; i++) {
-            int sign = r.nextInt(2);
+            int sign = r.nextInt(4);
             String sSign;
-            if (sign == 0) {
-                sSign = "+";
-            } else {
-                sSign = "-";
+            switch (sign){
+                case 0:
+                    sSign = "+";
+                    break;
+                case 1:
+                    sSign = "-";
+                    break;
+                case 2:
+                    sSign = "*";
+                    break;
+                case 3:
+                    sSign = ":";
+                    break;
+                default:
+                    sSign = "+";
             }
             int first = r.nextInt(maxnum - minnum);
             first = first + minnum;
