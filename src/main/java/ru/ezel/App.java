@@ -70,10 +70,14 @@ public class App {
         if (data.length != 4) {
             return "Usage: new maxnum minnum casesnum";
         }
-        int maxnum = Integer.parseInt(data[1]);
-        int minnum = Integer.parseInt(data[2]);
-        int casesnum = Integer.parseInt(data[3]);
-        return generateCases(maxnum, minnum, casesnum);
+        try {
+            int maxnum = Integer.parseInt(data[1]);
+            int minnum = Integer.parseInt(data[2]);
+            int casesnum = Integer.parseInt(data[3]);
+            return generateCases(maxnum, minnum, casesnum);
+        } catch (Exception e) {
+            return "Invalid parameters " + data[1] + " " + data[2] + " " + data[3] + " Usage: new maxnum minnum casesnum";
+        }
     }
 
     private static String generateCases(int maxnum, int minnum, int casesnum) {
@@ -88,7 +92,7 @@ public class App {
         for (int i = 0; i < casesnum; i++) {
             int sign = r.nextInt(4);
             String sSign;
-            switch (sign){
+            switch (sign) {
                 case 0:
                     sSign = "+";
                     break;
